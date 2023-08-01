@@ -1,0 +1,1 @@
+curl -H "Authentication: open sesame" http://locahost:8765/
