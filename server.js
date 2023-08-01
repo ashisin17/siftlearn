@@ -1,3 +1,5 @@
+// THIS IS A NEW BRANCH!
+
 const express = require('express')
 const {Pool} = require('pg') // importing Pool class (allows interaction w PostgreSQL database) from pg
 
