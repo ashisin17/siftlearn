@@ -1,89 +1,69 @@
-const app = require('express')()
-const cors = require('cors')
-const PORT = 8765
-
-// MIDDLEWARE 
-// logs req duration
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const app = (0, express_1.default)();
+const PORT = 8765;
 app.use((req, res, next) => {
-    const start = Date.now()
+    const start = Date.now();
     res.on('finish', () => {
         const duration = Date.now() - start;
-        console.log(`${req.method} ${req.originalUrl} - ${duration}ms`)
-        // ${req.method} = HTTP method used in request
-        // ${req.originalUrl} = reps original URl path of request
-    })
-    next()
-})
-
-//midw to enable CORS
-app.use(cors())
-
-//mid to check authentication
-app.use((req,res,next) => {
-    // if health, allow access to checkpoint w/ authentication
-    if(req.path === '/health')
-        return next()
-    
-    // check if auth header exists and has correct val
-    const authHead = req.headers['authentication'] // access val of Authentication head from req's headers obj 
-    if(!authHead || authHead !== 'open sesame') { // if header DNE or its val is not open ses, send error
-        return res.status(401).json({error: 'Unauthorized'})
+        console.log(`${req.method} ${req.originalUrl} - ${duration}ms`);
+    });
+    next();
+});
+app.use((0, cors_1.default)());
+app.use((req, res, next) => {
+    const authHead = req.headers['authentication'];
+    if (!authHead || authHead !== 'open sesame') {
+        return res.status(401).json({ error: 'Unauthorized' });
     }
-
-    // if authen valid, proceed to next midd
-    next()
-})
-
+    next();
+});
 // CREATING ENDPOINTS
 // check health or status
 app.get('/health', (req, res, next) => {
-    let time = performance.now()
-    res.send('Health or Status is running')
-})
-
-// accept a number and return the square of that number
-app.get('/square/:number', (req, res) => { // request and response params
-    // edge case: invalid num
-    const num = parseInt(req.params.number) //must use number to get the val from route correctly!
-    if(isNaN(num)){
-        return res.status(400).json({error: 'Invalid Number'})
+    const time = performance.now();
+    res.send('Health or Status is running');
+});
+app.get('/square/:number', (req, res) => {
+    const num = parseInt(req.params.number);
+    if (isNaN(num)) {
+        return res.status(400).json({ error: 'Invalid Number' });
     }
-
-    const square = num*num
-    res.json({result: square})
-})
-
-
-//return a JSON containing: your favorite color, 
-//state you live, last TV you saw, and a random prime 
-// number between 11 and 41 (exclusive)
+    const square = num * num;
+    res.json({ result: square });
+});
 app.get('/data', (req, res) => {
     const data = {
         favColor: 'blue',
         state: 'CA',
         tvShow: 'Bridgerton',
-        primNum: getRandomPrimeNumber(11,41)
+        primNum: getRandomPrimeNumber(11, 41),
+    };
+    res.json(data);
+});
+function getRandomPrimeNumber(min, max) {
+    const primeNums = [];
+    for (let i = min; i < max; i++) {
+        if (isPrime(i))
+            primeNums.push(i);
     }
-    res.json(data) // return request
-
-})
-
-// HELPER FUNCTIONS
-function getRandomPrimeNumber(min, max){
-    const primeNums = []
-    for(let i = min; i < max; i++) { // 41 exclusive
-        if(isPrime(i))
-            primeNums.push(i)
-    }
-    return primeNums[Math.floor(Math.random() * primeNums.length)]
+    return primeNums[Math.floor(Math.random() * primeNums.length)];
 }
-
 function isPrime(num) {
-    for(i = 2, sqrt = Math.sqrt(num); i <= sqrt; i++) {
-        if(num % i == 0)
-            return false
+    for (let i = 2, sqrt = Math.sqrt(num); i <= sqrt; i++) {
+        if (num % i == 0)
+            return false;
     }
-    return num > 1
+    return num > 1;
 }
-
-app.listen(PORT, () => console.log(`Server running on port 8765`)) 
+const person = {
+    username: 'ashisin17',
+    email: 'ashisin17@g.ucla.edu',
+    gender: 'f',
+};
+app.listen(PORT, () => console.log(`Server running on port 8765`));
